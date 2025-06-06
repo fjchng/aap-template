@@ -1,0 +1,827 @@
+# 3_CodingStandards
+
+## 1. Code Organization
+
+### 1.1 Project Structure
+
+#### Frontend Structure (React/Vue/Angular)
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # Basic UI elements (Button, Input, Modal)
+│   ├── forms/          # Form components
+│   └── layout/         # Layout components (Header, Sidebar, Footer)
+├── pages/              # Page-level components/views
+├── hooks/              # Custom React hooks (if React)
+├── services/           # API calls and external service integrations
+│   ├── api/           # API client and endpoints
+│   ├── auth/          # Authentication services
+│   └── utils/         # Service utilities
+├── store/              # State management (Redux, Zustand, Pinia)
+│   ├── slices/        # Redux slices or store modules
+│   └── middleware/    # Custom middleware
+├── utils/              # Helper functions and utilities
+├── types/              # TypeScript type definitions
+├── constants/          # Application constants
+├── styles/             # Global styles and themes
+├── assets/             # Static assets (images, icons, fonts)
+└── tests/              # Test files and utilities
+```
+
+#### Backend Structure (Node.js/Python/Java)
+
+```
+src/
+├── controllers/        # Request handlers and route logic
+├── services/           # Business logic layer
+├── models/             # Data models and schemas
+├── middleware/         # Custom middleware functions
+├── routes/             # API route definitions
+├── utils/              # Helper functions and utilities
+├── config/             # Configuration files
+├── validators/         # Input validation schemas
+├── types/              # TypeScript type definitions (if applicable)
+├── database/           # Database related files
+│   ├── migrations/    # Database migration files
+│   ├── seeds/         # Database seed files
+│   └── connection.js  # Database connection setup
+└── tests/              # Test files and utilities
+```
+
+### 1.2 Naming Conventions
+
+#### File Naming
+
+```
+✅ Good Examples:
+user-profile.component.tsx    # React component
+user-service.ts              # Service file
+auth-middleware.js           # Middleware
+user.model.js               # Data model
+api-routes.js               # Route definitions
+
+❌ Bad Examples:
+UserProfile.tsx             # PascalCase for files
+userservice.ts              # No separation
+auth_middleware.js          # Snake_case
+```
+
+#### Variable and Function Naming
+
+```typescript
+// Variables and Functions: camelCase
+const userAccount = getUserAccount();
+const isAuthenticated = checkAuthStatus();
+const handleSubmit = () => {};
+
+// Constants: UPPER_SNAKE_CASE
+const API_BASE_URL = "https://api.example.com";
+const MAX_RETRY_ATTEMPTS = 3;
+const DEFAULT_TIMEOUT = 5000;
+
+// Classes and Components: PascalCase
+class UserService {}
+interface UserProfile {}
+const UserDashboard = () => {};
+
+// Private methods: _camelCase (when applicable)
+class ApiClient {
+  private _formatResponse() {}
+  private _handleError() {}
+}
+```
+
+#### Database Naming
+
+```sql
+-- Tables: snake_case (plural)
+users, user_profiles, project_members
+
+-- Columns: snake_case
+first_name, email_address, created_at
+
+-- Indexes: idx_table_column
+idx_users_email, idx_tasks_project_id
+
+-- Foreign Keys: fk_table_column
+fk_tasks_project_id, fk_users_profile_id
+```
+
+---
+
+## 2. Guiding Principles
+
+### 2.1 KISS (Keep It Simple, Stupid)
+
+- **Write the simplest code that solves the problem**
+- Avoid clever tricks or abstractions unless necessary
+- Simpler code = fewer bugs and easier maintenance
+- Choose readable solutions over clever ones
+
+```typescript
+// ✅ Simple and clear
+function calculateTax(price: number): number {
+  return price * 0.1;
+}
+
+// ❌ Unnecessarily complex
+function calculateTax(price: number): number {
+  return +(price * 0.1).toFixed(2);
+}
+```
+
+### 2.2 YAGNI (You Aren't Gonna Need It)
+
+- **Don't build features or abstractions until there's a real need**
+- Avoids future-proofing that's often unnecessary
+- Reduces code that's never used but still needs to be maintained
+- Build for current requirements, not imagined future ones
+
+### 2.3 SOLID Principles
+
+#### S - Single Responsibility
+
+Each module/class/function should do one thing well
+
+```typescript
+// ✅ Single responsibility
+class UserValidator {
+  validateEmail(email: string): boolean {}
+  validatePassword(password: string): boolean {}
+}
+
+class UserRepository {
+  save(user: User): Promise<User> {}
+  findById(id: string): Promise<User> {}
+}
+
+// ❌ Multiple responsibilities
+class UserManager {
+  validateEmail(email: string): boolean {}
+  saveToDatabase(user: User): Promise<User> {}
+  sendWelcomeEmail(user: User): void {}
+}
+```
+
+#### O - Open/Closed
+
+Code should be open for extension, closed for modification
+
+#### L - Liskov Substitution
+
+Subclasses should be substitutable for their base classes
+
+#### I - Interface Segregation
+
+Prefer many small interfaces over one large one
+
+#### D - Dependency Inversion
+
+Depend on abstractions, not concrete implementations
+
+### 2.4 DRY (Don't Repeat Yourself)
+
+- **Eliminate duplication by abstracting shared logic into functions or modules**
+- Improves maintainability and consistency
+- Prevents bugs caused by inconsistent copies of logic
+
+```typescript
+// ✅ DRY - Extract common validation
+function validateRequired(value: string, fieldName: string): string | null {
+  return value.trim() === "" ? `${fieldName} is required` : null;
+}
+
+// ❌ Repetitive validation
+function validateName(name: string): string | null {
+  return name.trim() === "" ? "Name is required" : null;
+}
+function validateEmail(email: string): string | null {
+  return email.trim() === "" ? "Email is required" : null;
+}
+```
+
+### 2.5 Separation of Concerns
+
+- **Break code into distinct sections based on responsibility**
+- Keep data handling separate from presentation
+- Business logic separate from infrastructure concerns
+- Helps agents create clear boundaries in architecture
+
+### 2.6 Composition Over Inheritance
+
+- **Prefer building behavior using small, composable functions or components**
+- More flexible and easier to reason about
+- Leads to flatter, more understandable code structures
+
+```typescript
+// ✅ Composition
+const withLogging =
+  (fn: Function) =>
+  (...args: any[]) => {
+    console.log("Function called");
+    return fn(...args);
+  };
+
+const withValidation =
+  (fn: Function) =>
+  (...args: any[]) => {
+    // validation logic
+    return fn(...args);
+  };
+
+// ❌ Deep inheritance
+class BaseHandler extends Logger {}
+```
+
+### 2.7 Law of Demeter (Principle of Least Knowledge)
+
+- **A unit should only talk to its immediate collaborators**
+- Don't access internal details of other objects
+- Encourages low coupling and better encapsulation
+
+```typescript
+// ✅ Respect boundaries
+class OrderService {
+  constructor(private userService: UserService) {}
+
+  processOrder(userId: string) {
+    const user = this.userService.getUser(userId);
+    // Don't access user.profile.address.country directly
+    const country = this.userService.getUserCountry(userId);
+  }
+}
+
+// ❌ Breaking Law of Demeter
+class OrderService {
+  processOrder(user: User) {
+    const country = user.profile.address.country; // Too deep
+  }
+}
+```
+
+### 2.8 Fail Fast
+
+- **Design code to fail early and loudly when something goes wrong**
+- Makes debugging easier and avoids silent failures
+- Helps agents avoid subtle bugs due to deferred or hidden errors
+
+```typescript
+// ✅ Fail fast with clear validation
+function divide(a: number, b: number): number {
+  if (b === 0) {
+    throw new Error("Division by zero is not allowed");
+  }
+  return a / b;
+}
+
+// ❌ Silent failure
+function divide(a: number, b: number): number {
+  return b === 0 ? 0 : a / b; // Wrong result, no error
+}
+```
+
+### 2.9 Convention Over Configuration
+
+- **Favor sensible defaults and standards instead of requiring extensive config**
+- Speeds up development and reduces boilerplate
+- Guides agents toward idiomatic solutions for frameworks or libraries
+
+### 2.10 Testability First
+
+- **Write code with testing in mind**
+- Use pure functions when possible
+- Implement dependency injection
+- Easier to validate correctness, faster to debug
+
+```typescript
+// ✅ Testable - pure function
+function calculateDiscount(price: number, discountPercent: number): number {
+  return price * (discountPercent / 100);
+}
+
+// ✅ Testable - dependency injection
+class OrderService {
+  constructor(private paymentGateway: PaymentGateway) {}
+
+  processPayment(amount: number) {
+    return this.paymentGateway.charge(amount);
+  }
+}
+
+// ❌ Hard to test
+class OrderService {
+  processPayment(amount: number) {
+    const gateway = new StripeGateway(); // Hard dependency
+    return gateway.charge(amount);
+  }
+}
+```
+
+### 2.11 Minimal Surface Area
+
+- **Keep public APIs or exported functions/classes minimal**
+- Reduces the impact of changes and simplifies usage
+- Encourages agents to avoid overly broad or leaky interfaces
+
+### 2.12 Optimize for Readability
+
+- **Code is read far more often than it's written**
+- Prioritize naming, formatting, and structure over micro-optimizations
+- Guides agents to write self-documenting code
+
+```typescript
+// ✅ Readable and self-documenting
+function calculateShippingCost(weight: number, distance: number): number {
+  const baseRate = 5.0;
+  const weightMultiplier = 0.5;
+  const distanceMultiplier = 0.1;
+
+  return baseRate + weight * weightMultiplier + distance * distanceMultiplier;
+}
+
+// ❌ Unclear and hard to understand
+function calc(w: number, d: number): number {
+  return 5 + w * 0.5 + d * 0.1;
+}
+```
+
+### 2.13 Start with the Happy Path
+
+- **Focus on the core, successful path first; handle edge cases later**
+- Keeps the main logic clean and understandable
+- Helps agents prioritize what's most important first
+
+---
+
+## 3. Code Quality Standards
+
+### 3.1 Language-Specific Rules
+
+#### JavaScript/TypeScript Configuration
+
+```json
+// .eslintrc.json
+{
+  "extends": [
+    "@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/explicit-function-return-type": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
+    "prefer-const": "error",
+    "no-var": "error"
+  }
+}
+
+// prettier.config.js
+module.exports = {
+  semi: true,
+  trailingComma: 'es5',
+  singleQuote: true,
+  printWidth: 80,
+  tabWidth: 2
+};
+```
+
+#### Type Definitions
+
+```typescript
+// ✅ Well-defined interfaces
+interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface CreateUserRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
+
+// ✅ Proper function signatures
+function createUser(userData: CreateUserRequest): Promise<User> {
+  // implementation
+}
+
+// ❌ Avoid 'any' type
+function processData(data: any): any {
+  // avoid this
+}
+```
+
+#### Import/Export Organization
+
+```typescript
+// ✅ Organized imports
+// 1. Node modules
+import React from "react";
+import { Router } from "express";
+
+// 2. Internal modules (absolute paths)
+import { UserService } from "@/services/user-service";
+import { validateEmail } from "@/utils/validation";
+
+// 3. Relative imports
+import "./component.styles.css";
+
+// ✅ Named exports preferred
+export { UserService, UserRepository };
+
+// ✅ Default export for main component/class
+export default UserDashboard;
+```
+
+### 3.2 Function and Component Standards
+
+#### Function Guidelines
+
+```typescript
+// ✅ Good function structure
+/**
+ * Calculates the total price including tax and shipping
+ * @param basePrice - The base price of the item
+ * @param taxRate - Tax rate as decimal (0.1 for 10%)
+ * @param shippingCost - Fixed shipping cost
+ * @returns Total price including all fees
+ */
+function calculateTotalPrice(
+  basePrice: number,
+  taxRate: number,
+  shippingCost: number
+): number {
+  if (basePrice < 0) {
+    throw new Error("Base price cannot be negative");
+  }
+
+  const taxAmount = basePrice * taxRate;
+  return basePrice + taxAmount + shippingCost;
+}
+
+// ✅ Maximum function length: 50 lines
+// ✅ Single responsibility
+// ✅ Clear parameter and return types
+// ✅ Descriptive function name
+```
+
+#### React Component Standards
+
+```tsx
+// ✅ Good component structure
+interface UserCardProps {
+  user: User;
+  onEdit?: (user: User) => void;
+  isEditable?: boolean;
+}
+
+export function UserCard({
+  user,
+  onEdit,
+  isEditable = false,
+}: UserCardProps): JSX.Element {
+  const handleEditClick = () => {
+    if (onEdit) {
+      onEdit(user);
+    }
+  };
+
+  return (
+    <div className="user-card">
+      <h3>
+        {user.firstName} {user.lastName}
+      </h3>
+      <p>{user.email}</p>
+      {isEditable && <button onClick={handleEditClick}>Edit</button>}
+    </div>
+  );
+}
+```
+
+### 3.3 Error Handling
+
+#### Frontend Error Handling
+
+```typescript
+// ✅ Consistent error handling patterns
+class ApiError extends Error {
+  constructor(message: string, public status: number, public code?: string) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+// ✅ Service layer error handling
+async function fetchUser(id: string): Promise<User> {
+  try {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      throw new ApiError("User not found", 404, "USER_NOT_FOUND");
+    }
+    throw new ApiError("Failed to fetch user", 500, "FETCH_ERROR");
+  }
+}
+
+// ✅ Component error handling
+function UserProfile({ userId }: { userId: string }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUser(userId)
+      .then(setUser)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [userId]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return <div>User not found</div>;
+
+  return <div>{/* User display */}</div>;
+}
+```
+
+#### Backend Error Handling
+
+```typescript
+// ✅ Express.js error handling
+class ValidationError extends Error {
+  constructor(message: string, public field: string) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+// ✅ Service layer with proper error propagation
+class UserService {
+  async createUser(userData: CreateUserRequest): Promise<User> {
+    try {
+      // Validate input
+      if (!userData.email) {
+        throw new ValidationError("Email is required", "email");
+      }
+
+      // Check if user exists
+      const existingUser = await this.userRepository.findByEmail(
+        userData.email
+      );
+      if (existingUser) {
+        throw new ValidationError("Email already exists", "email");
+      }
+
+      return await this.userRepository.create(userData);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      throw error; // Re-throw to let controller handle
+    }
+  }
+}
+
+// ✅ Controller error handling
+app.post("/users", async (req, res) => {
+  try {
+    const user = await userService.createUser(req.body);
+    res.status(201).json({ success: true, data: user });
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: error.message,
+          field: error.field,
+        },
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: {
+        code: "INTERNAL_ERROR",
+        message: "An unexpected error occurred",
+      },
+    });
+  }
+});
+```
+
+---
+
+## 4. Documentation Requirements
+
+### 4.1 Inline Documentation
+
+#### Function Documentation (JSDoc)
+
+````typescript
+/**
+ * Processes a payment using the specified payment method
+ *
+ * @param amount - The payment amount in cents
+ * @param paymentMethod - The payment method to use
+ * @param metadata - Optional metadata to attach to the payment
+ * @returns Promise that resolves to the payment result
+ * @throws {ValidationError} When amount is invalid
+ * @throws {PaymentError} When payment processing fails
+ *
+ * @example
+ * ```typescript
+ * const result = await processPayment(1000, 'card_123', { orderId: 'order_456' });
+ * console.log(result.status); // 'success' | 'failed'
+ * ```
+ */
+async function processPayment(
+  amount: number,
+  paymentMethod: string,
+  metadata?: Record<string, string>
+): Promise<PaymentResult> {
+  // implementation
+}
+````
+
+#### Complex Logic Documentation
+
+```typescript
+function calculateShippingCost(order: Order): number {
+  // Calculate base shipping cost based on weight
+  // Formula: $5 base + $0.50 per pound over 1lb
+  const baseWeight = 1; // pounds
+  const baseCost = 5.0; // dollars
+  const perPoundRate = 0.5; // dollars per pound
+
+  let shippingCost = baseCost;
+
+  if (order.weight > baseWeight) {
+    const extraWeight = order.weight - baseWeight;
+    shippingCost += extraWeight * perPoundRate;
+  }
+
+  // Apply distance multiplier for international shipping
+  if (order.isInternational) {
+    shippingCost *= 1.5; // 50% surcharge for international
+  }
+
+  return shippingCost;
+}
+```
+
+### 4.2 Component Documentation
+
+```tsx
+/**
+ * UserCard component displays user information in a card format
+ *
+ * Features:
+ * - Shows user avatar, name, and email
+ * - Optional edit functionality
+ * - Loading and error states
+ * - Responsive design
+ *
+ * @param user - The user object to display
+ * @param onEdit - Optional callback when edit button is clicked
+ * @param isEditable - Whether to show the edit button
+ * @param loading - Whether to show loading state
+ */
+interface UserCardProps {
+  user: User;
+  onEdit?: (user: User) => void;
+  isEditable?: boolean;
+  loading?: boolean;
+}
+
+export function UserCard(props: UserCardProps) {
+  // Component implementation
+}
+```
+
+### 4.3 API Documentation
+
+````typescript
+/**
+ * @route POST /api/users
+ * @description Create a new user account
+ * @access Public
+ *
+ * @body {CreateUserRequest} userData - User registration data
+ * @body {string} userData.email - Valid email address
+ * @body {string} userData.password - Password (min 8 chars)
+ * @body {string} userData.firstName - User's first name
+ * @body {string} userData.lastName - User's last name
+ *
+ * @returns {201} User created successfully
+ * @returns {400} Validation error
+ * @returns {409} Email already exists
+ * @returns {500} Internal server error
+ *
+ * @example
+ * ```json
+ * POST /api/users
+ * {
+ *   "email": "user@example.com",
+ *   "password": "securepass123",
+ *   "firstName": "John",
+ *   "lastName": "Doe"
+ * }
+ * ```
+ */
+````
+
+---
+
+## 5. Git Workflow Standards
+
+### 5.1 Branch Naming Conventions
+
+```
+Main branches:
+- main/master     # Production-ready code
+- develop         # Integration branch for features
+
+Feature branches:
+- feature/user-authentication
+- feature/payment-integration
+- feature/dashboard-redesign
+
+Bug fix branches:
+- bugfix/login-validation-error
+- bugfix/memory-leak-fix
+
+Hotfix branches:
+- hotfix/security-patch
+- hotfix/critical-bug-fix
+
+Release branches:
+- release/v1.2.0
+- release/v2.0.0-beta
+```
+
+### 5.2 Commit Message Format
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+
+Types:
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation only changes
+- style: Changes that do not affect the meaning of the code
+- refactor: A code change that neither fixes a bug nor adds a feature
+- perf: A code change that improves performance
+- test: Adding missing tests or correcting existing tests
+- chore: Changes to the build process or auxiliary tools
+
+Examples:
+feat(auth): add OAuth2 integration with Google
+fix(api): resolve user validation bug in registration endpoint
+docs(readme): update installation instructions
+style(components): fix ESLint warnings in UserCard component
+refactor(utils): extract common validation functions
+test(auth): add unit tests for login service
+chore(deps): update React to version 18.2.0
+```
+
+### 5.3 Pull Request Guidelines
+
+```markdown
+## Pull Request Template
+
+### Description
+
+Brief description of changes made
+
+### Type of Change
+
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
+
+### Testing
+
+- [ ] Unit tests pass
+- [ ] Integration tests pass
+- [ ] Manual testing completed
+- [ ] No new console errors
+
+### Checklist
+
+- [ ] Code follows the project's style guidelines
+- [ ] Self-review of code completed
+- [ ] Code is documented (JSDoc comments where needed)
+- [ ] Changes generate no new warnings
+- [ ] Tests added/updated for new functionality
+```
