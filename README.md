@@ -27,7 +27,7 @@ This framework provides a systematic approach to software project planning and e
 
 ```bash
 # Clone as template
-git clone https://github.com/yourusername/ai-programming-framework.git my-new-project
+git clone https://github.com/fjchng/ai-programming-framework.git my-new-project
 cd my-new-project
 
 # Follow the workflow in GettingStarted.md
@@ -253,7 +253,7 @@ We welcome contributions to improve this framework! Please see our [Contributing
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ai-programming-framework.git
+git clone https://github.com/fjchng/ai-programming-framework.git
 
 # Create a feature branch
 git checkout -b feature/your-improvement
@@ -273,10 +273,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Documentation**: [GettingStarted.md](./GettingStarted.md)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ai-programming-framework/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-programming-framework/discussions)
-- **Email**: support@yourframework.com
+- **Email**: jiacheng.fupoh@gmail.com
 
 ## 🙏 Acknowledgments
 
