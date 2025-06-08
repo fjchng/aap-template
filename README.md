@@ -1,5 +1,47 @@
 # AI-Assisted Programming (AAP) Template
 
+## What This Framework Is
+
+This is a comprehensive documentation system designed to maximize success rates with AI-assisted programming. It transforms complex software projects into clear, actionable specifications that AI agents can follow systematically.
+
+**Core Philosophy**: Front-load Overview and design to create manageable, well-defined tasks for AI agents.
+
+## Purpose and Benefits
+
+### Problems This Solves
+
+- **Ambiguous Requirements** → Clear, testable specifications
+- **Complex Tasks** → Bite-sized, implementable work items
+- **Inconsistent Code** → Standardized patterns and practices
+- **Knowledge Loss** → Cumulative learning and pattern recognition
+- **Agent Failures** → Optimized prompts and task definitions
+
+### Key Benefits
+
+- **80%+ AI Task Success Rate** through proper breakdown and specification
+- **Consistent Code Quality** via enforced standards and patterns
+- **Faster Development** through reusable patterns and optimized workflows
+- **Knowledge Accumulation** that improves over time
+- **Reduced Technical Debt** through upfront architectural Overview
+
+## Framework Structure
+
+```
+Project Documentation Framework/
+├── 1.1_Requirements.md           # Business requirements and acceptance criteria
+├── 2.1_SystemArchitecture.md     # Technical architecture and design decisions
+├── 3.1_CodingStandards.md        # Code quality standards and AI guidelines
+├── 4.1.1_ProjectManagementGuide.md  # Sprint cycles and work organization
+├── 4.2.1_EpicsOverview.md        # Epic overview from requirements
+├── 4.3.1_StoriesOverview.md      # Story overview from epics
+├── 4.4.1_TasksOverview.md        # Task overview from stories
+├── 4.5.1_CummulativeLearnings.md # Knowledge accumulation and patterns
+├── EPIC-xxx.md                   # Individual epic specifications
+├── STORY-xxx.md                  # Individual story specifications
+├── TASK-xxx.md                   # Individual task specifications (AI-ready)
+└── GettingStarted.md             # This guide
+```
+
 A comprehensive documentation framework designed to maximize success rates when working with AI agents in software development projects.
 
 ## Overview
